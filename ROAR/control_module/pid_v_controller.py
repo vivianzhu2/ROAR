@@ -151,10 +151,10 @@ class PIDVController(Controller):
         speed_range_mid = 70
         speed_range_high = 90
         bumpiness_high =-2.3
-        bumpiness_low =-0.35
+        bumpiness_low =-0.55
         narrowturn_thr =0.6
         wideturn_thr =0.05
-        steering_thr =0.3
+        steering_thr =0.35
         bumpy_region_zboundary = 3000
         hilly_region_xboundary = 2800
 		
@@ -182,7 +182,7 @@ class PIDVController(Controller):
                 self.old_bigbump+=1	
                 print("BIGslope: "+str(round(current_bumpiness, 3))+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
             elif abs(steering) > steering_thr : # steering control
-                throttle = 0.3
+                throttle = 0.7
                 brake = 0
                 print("hardsteering: "+str(steering)+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
 				
@@ -206,27 +206,27 @@ class PIDVController(Controller):
             elif sharp_error > narrowturn_thr and current_speed > 100:
 #                throttle = -0.3
  #               brake = 0.7   
-                throttle =-0.3+self.old_narrowturn*0.0
-                brake =0.7-self.old_narrowturn*0.0
+                throttle =-0.3+self.old_narrowturn*0.02
+                brake =0.7-self.old_narrowturn*0.02
                 self.old_narrowturn+=1
                 print("narrowturn: "+str(sharp_error)+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
 					
 #                self.old_bigbump=0
             elif current_bumpiness < bumpiness_low:
-                throttle = 0
+                throttle = 0.3
                 brake = 0  
                 print("slope: "+str(round(current_bumpiness, 3))+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
         	
 #                self.old_bigbump=0
             elif abs(steering) > steering_thr : # steering control
-                throttle = 0.3
+                throttle = 0.7
                 brake = 0	
                 print("hardsteering: "+str(steering)+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
 			
         	
 #                self.old_bigbump=0
             elif wide_error > wideturn_thr and current_speed > 95: # wide turn
-                throttle = max(0.2, 1 - 6.6*pow(wide_error + current_speed*0.0015, 3))
+                throttle = max(0.37, 1 - 5*pow(wide_error + current_speed*0.0015, 3))
 #                throttle = max(0.37, 1 - 5*(wide_error + current_speed*0.0015))
                 brake = 0
                 self.old_wideturn+=1
