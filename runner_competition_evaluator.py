@@ -9,6 +9,7 @@ from ROAR_Sim.carla_client.carla_runner import CarlaRunner
 from typing import Tuple
 from prettytable import PrettyTable
 from ROAR.agent_module.michael_pid_agent import PIDAgent
+from ROAR.agent_module.pid_v_agent import PIDVAgent
 
 
 def compute_score(carla_runner: CarlaRunner) -> Tuple[float, int, int]:
@@ -77,8 +78,8 @@ def suppress_warnings():
 
 def main():
     suppress_warnings()
-    agent_class = PIDAgent
-    num_trials = 1
+    agent_class = PIDVAgent
+    num_trials = 10
     total_score_array = []
     num_laps = 1
     table = PrettyTable()
@@ -87,7 +88,7 @@ def main():
     for i in range(num_trials):
         print(f"runner_competition_evaluator -> Trial: {i}")
         scores = run(agent_class=agent_class,
-                     agent_config_file_path=Path("./ROAR/configurations/carla/carla_agent_configuration.json"),
+                     agent_config_file_path=Path("./ROAR/configurations/carla/carla_agent_configuration_v.json"),
                      carla_config_file_path=Path("./ROAR_Sim/configurations/configuration.json"),
                      num_laps=num_laps)
         total_score_array.append(scores[0])
