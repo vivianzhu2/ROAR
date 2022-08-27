@@ -68,7 +68,13 @@ class PIDVController(Controller):
         current_speed = Vehicle.get_speed(self.agent.vehicle)
 #        current_locationx = self.agent.vehicle.transform.location.x   
 #        current_locationz = self.agent.vehicle.transform.location.z	
-        current_pitch = float(next_waypoint.record().split(",")[4])		
+        current_waypt=next_waypoint.record().split(",")
+	
+  
+		#follow the text script feedback from Mr. Zhang to find the dangerous box 
+        dangerous_boxx = float(current_waypt[0])
+        dangerous_boxz = float(current_waypt[2])
+        current_pitch  = float(current_waypt[4])	
         current_bumpiness= current_pitch - self.old_pitch
         self.old_pitch = current_pitch      
 
@@ -168,7 +174,27 @@ class PIDVController(Controller):
 #        if True:
 		#very bumpy winding hilly areas 
             #print ("1st region")  
-        if current_speed <= speed_range_mid : #low speed
+#        if ((dangerous_boxx<5575 and dangerous_boxx>5574) and  (dangerous_boxz<4200 and dangerous_boxz>4197)) or ((dangerous_boxx<4914 and dangerous_boxx>4905) and  (dangerous_boxz<3993 and dangerous_boxz>3982)) or ((dangerous_boxx<4636 and dangerous_boxx>4616) and  (dangerous_boxz<4141 and dangerous_boxz>4118)):
+#        if  ((dangerous_boxx<4929 and dangerous_boxx>4905) and  (dangerous_boxz<3993 and dangerous_boxz>3958)) :
+#        if  ((dangerous_boxx<4930 and dangerous_boxx>4905) and  (dangerous_boxz<3930 and dangerous_boxz>3813)) :
+        if  ((dangerous_boxx<4910 and dangerous_boxx>4905) and  (dangerous_boxz<3993 and dangerous_boxz>3813)) :
+            #self.max_speed=30 
+            #brake = 0			
+            throttle = 0
+            self.old_narrowturn=0
+            self.old_wideturn=0            	
+            self.old_bigbump=0
+#            print("Dangerousbox: "+str(round(dangerous_boxx, 3))+'\t'+str(round(dangerous_boxz, 3))+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())				 
+#        elif   ((dangerous_boxx<5630 and dangerous_boxx>5583) and  (dangerous_boxz<4240 and dangerous_boxz>4185)):
+        elif   ((dangerous_boxx<5630 and dangerous_boxx>5583) and  (dangerous_boxz<4240 and dangerous_boxz>4185)):
+            #self.max_speed=20 
+            throttle = 0
+            #brake = 0			
+            self.old_narrowturn=0
+            self.old_wideturn=0            	
+            self.old_bigbump=0
+#            print("Dangerousbox: "+str(round(dangerous_boxx, 3))+'\t'+str(round(dangerous_boxz, 3))+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
+        elif current_speed <= speed_range_mid : #low speed
             throttle = 1
             brake = 0
 
@@ -180,9 +206,11 @@ class PIDVController(Controller):
                 throttle =-1+self.old_bigbump*0.3
                 brake =1-self.old_bigbump*0.3
                 self.old_bigbump+=1	
+#                print("Very Bumpy: "+str(round(current_bumpiness, 3))+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
             elif abs(steering) > steering_thr : # steering control
-                throttle = 0.7
+                throttle = 0.3
                 brake = 0
+#                print("hardsteering: "+str(steering)+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
 				
 
                 self.old_narrowturn=0
@@ -199,6 +227,8 @@ class PIDVController(Controller):
                 throttle =-1+self.old_bigbump*0.1
                 brake =1-self.old_bigbump*0.1
                 self.old_bigbump+=1		
+
+#                print("VeryBumpy: "+str(round(current_bumpiness, 3))+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
 		
             elif sharp_error > narrowturn_thr and current_speed > 100:
 #                throttle = -0.3
@@ -206,24 +236,28 @@ class PIDVController(Controller):
                 throttle =-0.3+self.old_narrowturn*0.02
                 brake =0.7-self.old_narrowturn*0.02
                 self.old_narrowturn+=1
- 					
+#                print("narrowturn: "+str(sharp_error)+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
+					
 #                self.old_bigbump=0
             elif current_bumpiness < bumpiness_low:
                 throttle = 0.3
                 brake = 0  
+#                print("alittlebumpy: "+str(round(current_bumpiness, 3))+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
         	
 #                self.old_bigbump=0
             elif abs(steering) > steering_thr : # steering control
-                throttle = 0.7
+                throttle = 0.3
                 brake = 0	
+##                print("hardsteering: "+str(steering)+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
  			
         	
 #                self.old_bigbump=0
             elif wide_error > wideturn_thr and current_speed > 95: # wide turn
-                throttle = max(0.37, 1 - 5*pow(wide_error + current_speed*0.0015, 3))
+                throttle = max(0.3, 1 - 5*pow(wide_error + current_speed*0.0015, 3))
 #                throttle = max(0.37, 1 - 5*(wide_error + current_speed*0.0015))
                 brake = 0
                 self.old_wideturn+=1
+#                print("wideerror: "+str(wide_error)+"\t current_speed: "+str(current_speed)+"\t throttle: "+str(throttle)+"\t next_watpoint: ",next_waypoint.record())
 	        	
 #                self.old_bigbump=0
             else:	
