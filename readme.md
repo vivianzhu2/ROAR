@@ -43,11 +43,11 @@ From here, I noted the areas where the car might need to slow down to avoid a co
 
 The animation below shows a sharp turn that the car must anticipate, lowering the throttle to slow down in order to avoid a collision.
 
-<p align="center"><img src="https://i0.wp.com/roar.berkeley.edu/wp-content/uploads/2022/10/Figure_3_sharp_turns.gif?fit=1200%2C675&ssl=1" width="600" alt="Sharp turn"><br><em>Figure 3: Sharp turns</em></p>
+<p align="center"><img src="https://i0.wp.com/roar.berkeley.edu/wp-content/uploads/2022/10/Figure_3_sharp_turns.gif?w=480&ssl=1" width="480" alt="Sharp turn"><br><em>Figure 3: Sharp turns</em></p>
 
 The next animation shows a bumpy area of the track, where I also reduced the throttle in the controller.
 
-<p align="center"><img src="https://i0.wp.com/roar.berkeley.edu/wp-content/uploads/2022/10/Figure_4_bumpy.gif?fit=1200%2C675&ssl=1" width="600" alt="Bumpy area"><br><em>Figure 4: Bumpy area</em></p>
+<p align="center"><img src="https://i0.wp.com/roar.berkeley.edu/wp-content/uploads/2022/10/Figure_4_bumpy.gif?w=480&ssl=1" width="480" alt="Bumpy area"><br><em>Figure 4: Bumpy area</em></p>
 
 To shorten the lap time further while still avoiding collisions, I analyzed the throttle in the previous blog's sample code more carefully by capturing the throttle values along the whole track, as shown below. The diagram compares my model with the sample model in terms of throttle and speed. My model reduces the throttle less when it reaches a risky area, so the car does not slow down too much. This leads to a higher speed overall along the track.
 
@@ -63,7 +63,7 @@ To do this, I built a series of `if` statements in the controller that implement
 
 Once the design was in place, I ran the program many times to check for collisions and lap time and to optimize further. During a test run with Mr. Tianlun Zhang, he noticed that collisions were very likely around some specific coordinates. He suggested "boxing" those collision spots and reducing the speed inside them. The animation below shows one of these crash spots. Because it has both bumps and winding road, the car crashed there frequently.
 
-<p align="center"><img src="https://i0.wp.com/roar.berkeley.edu/wp-content/uploads/2022/10/Figure_7_Crash.gif?fit=1200%2C675&ssl=1" width="600" alt="Crash in test run"><br><em>Figure 7: Crash in a test run</em></p>
+<p align="center"><img src="https://i0.wp.com/roar.berkeley.edu/wp-content/uploads/2022/10/Figure_7_Crash.gif?w=480&ssl=1" width="480" alt="Crash in test run"><br><em>Figure 7: Crash in a test run</em></p>
 
 To address this, I recorded the x, y, z coordinates of the collisions. Using those coordinates, I hard-coded `if` statements that box these locations. Inside the dangerous boxes, the throttle is set to 0 to avoid potential collisions.
 
